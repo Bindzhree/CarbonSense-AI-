@@ -1,0 +1,64 @@
+{
+  "rf_regression": {
+    "mae": 321.59,
+    "r2": 0.753
+  },
+  "linear_regression": {
+    "mae": 541.16,
+    "r2": 0.5497
+  },
+  "rf_classification": {
+    "accuracy": 77.4
+  },
+  "dt_classification": {
+    "accuracy": 71.95
+  },
+  "feature_importance": {
+    "Vehicle Monthly Distance Km": 0.4031,
+    "Frequency of Traveling by Air": 0.2391,
+    "How Many New Clothes Monthly": 0.0684,
+    "Waste Bag Weekly Count": 0.038,
+    "Monthly Grocery Bill": 0.0368,
+    "Body Type": 0.0348,
+    "Sex": 0.0317,
+    "Waste Bag Size": 0.0301,
+    "How Long Internet Daily Hour": 0.027,
+    "How Long TV PC Daily Hour": 0.0244,
+    "Heating Energy Source": 0.0228,
+    "Diet": 0.013,
+    "How Often Shower": 0.0105,
+    "Social Activity": 0.009,
+    "Energy efficiency": 0.0073,
+    "Transport": 0.0041
+  },
+  "confusion_matrix": [
+    [
+      596,
+      0,
+      90
+    ],
+    [
+      29,
+      525,
+      75
+    ],
+    [
+      141,
+      117,
+      427
+    ]
+  ],
+  "class_names": [
+    "High",
+    "Low",
+    "Medium"
+  ],
+  "train_size": 8000,
+  "test_size": 2000,
+  "total_records": 10000,
+  "emission_distribution": {
+    "High": 3397,
+    "Medium": 3303,
+    "Low": 3300
+  }
+}

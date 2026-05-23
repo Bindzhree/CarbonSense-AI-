@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Analytics Dashboard | EcoTrace</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/css/style.css">
+<link rel="stylesheet" href="/static/css/dashboard.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+</head>
+<body class="dashboard-body">
+
+<nav class="navbar">
+  <div class="nav-brand"><span class="brand-icon">🌿</span><span class="brand-name">EcoTrace</span></div>
+  <div class="nav-links">
+    <a href="/" class="nav-link">Predictor</a>
+    <a href="/dashboard" class="nav-link active">Analytics</a>
+  </div>
+</nav>
+
+<div class="dashboard-layout">
+  <aside class="sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-title">Model Performance</div>
+      <div class="sidebar-metric"><span class="sm-label">RF Classifier</span><span class="sm-value accent">{{ metrics.rf_classification.accuracy }}%</span></div>
+      <div class="sidebar-metric"><span class="sm-label">DT Classifier</span><span class="sm-value">{{ metrics.dt_classification.accuracy }}%</span></div>
+      <div class="sidebar-metric"><span class="sm-label">RF Regressor R²</span><span class="sm-value accent">{{ metrics.rf_regression.r2 }}</span></div>
+      <div class="sidebar-metric"><span class="sm-label">RF MAE (kg)</span><span class="sm-value">{{ metrics.rf_regression.mae }}</span></div>
+      <div class="sidebar-metric"><span class="sm-label">Linear R²</span><span class="sm-value">{{ metrics.linear_regression.r2 }}</span></div>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-title">Dataset</div>
+      <div class="sidebar-metric"><span class="sm-label">Source</span><span class="sm-value accent">Kaggle</span></div>
+      <div class="sidebar-metric"><span class="sm-label">Total Records</span><span class="sm-value accent">{{ metrics.train_size + metrics.test_size }}</span></div>
+      <div class="sidebar-metric"><span class="sm-label">Train / Test</span><span class="sm-value">{{ metrics.train_size }} / {{ metrics.test_size }}</span></div>
+      <div class="sidebar-metric"><span class="sm-label">Features Used</span><span class="sm-value">16</span></div>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-title">Emission Classes</div>
+      {% for cls, cnt in metrics.emission_distribution.items() %}
+      <div class="sidebar-metric"><span class="sm-label">{{ cls }}</span><span class="sm-value">{{ cnt }}</span></div>
+      {% endfor %}
+    </div>
+  </aside>
+
+  <main class="dashboard-main">
+    <div class="dash-header">
+      <h1>Analytics Dashboard</h1>
+      <p>Real Kaggle dataset insights and ML model performance — 10,000 individual carbon footprint records</p>
+    </div>
+
+    <div class="stat-cards" id="statCards">
+      <div class="stat-card"><div class="stc-icon">📊</div><div class="stc-label">Dataset Records</div><div class="stc-value" id="sc-total">—</div></div>
+      <div class="stat-card"><div class="stc-icon">📈</div><div class="stc-label">Mean CO₂ (kg/yr)</div><div class="stc-value" id="sc-mean">—</div></div>
+      <div class="stat-card"><div class="stc-icon">📉</div><div class="stc-label">Median CO₂ (kg/yr)</div><div class="stc-value" id="sc-median">—</div></div>
+      <div class="stat-card"><div class="stc-icon">🎯</div><div class="stc-label">RF Accuracy</div><div class="stc-value accent">{{ metrics.rf_classification.accuracy }}%</div></div>
+    </div>
+
+    <div class="charts-row">
+      <div class="chart-card"><h3>Average CO₂ by Diet Type</h3><canvas id="dietChart"></canvas></div>
+      <div class="chart-card"><h3>Average CO₂ by Transport Mode</h3><canvas id="transportChart"></canvas></div>
+    </div>
+
+    <div class="charts-row">
+      <div class="chart-card"><h3>Emission Category Distribution</h3><canvas id="distChart"></canvas></div>
+      <div class="chart-card"><h3>Average CO₂ by Air Travel Frequency</h3><canvas id="travelChart"></canvas></div>
+    </div>
+
+    <div class="chart-card full-chart"><h3>CO₂ by Heating Energy Source</h3><canvas id="heatingChart"></canvas></div>
+
+    <div class="chart-card full-chart"><h3>Feature Importance (Random Forest Regressor)</h3><canvas id="featureChart"></canvas></div>
+
+    <div class="chart-card full-chart"><h3>Confusion Matrix — RF Classifier</h3><div class="confusion-matrix" id="confusionMatrix"></div></div>
+
+    <div class="chart-card full-chart"><h3>Model Performance Comparison</h3><canvas id="modelChart"></canvas></div>
+  </main>
+</div>
+
+<footer class="footer">
+  <div class="container">
+    <p>🌿 EcoTrace — Carbon Footprint Predictor &nbsp;|&nbsp; NMIT CSE Mini Project 22CSE665 &nbsp;|&nbsp; AY 2025–2026</p>
+  </div>
+</footer>
+
+<script>const METRICS = {{ metrics | tojson }};</script>
+<script src="/static/js/dashboard.js"></script>
+</body>
+</html>

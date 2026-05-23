@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Carbon Footprint Predictor | EcoTrace</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="nav-brand">
+    <span class="brand-icon">🌿</span>
+    <span class="brand-name">EcoTrace</span>
+  </div>
+  <div class="nav-links">
+    <a href="/" class="nav-link active">Predictor</a>
+    <a href="/dashboard" class="nav-link">Analytics</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+    <div class="grid-overlay"></div>
+  </div>
+  <div class="hero-content">
+    <div class="hero-badge">AI-Powered · Real Kaggle Dataset · 10,000 Records</div>
+    <h1 class="hero-title">Measure Your <span class="gradient-text">Carbon Footprint</span></h1>
+    <p class="hero-subtitle">Answer a few lifestyle questions and our machine learning model will predict your annual CO₂ emissions with personalised sustainability recommendations.</p>
+    <div class="hero-stats">
+      <div class="stat-pill">🎯 77.4% Model Accuracy</div>
+      <div class="stat-pill">📊 10,000 Real Records</div>
+      <div class="stat-pill">🔬 4 ML Algorithms</div>
+    </div>
+    <a href="#predictor" class="cta-btn">Start Assessment <span>↓</span></a>
+  </div>
+</section>
+
+<!-- FORM -->
+<section id="predictor" class="predictor-section">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-tag">Step-by-Step Assessment</span>
+      <h2>Your Lifestyle Profile</h2>
+      <p>Fill in the details below to get your personalised carbon footprint analysis</p>
+    </div>
+
+    <form id="predictorForm" class="predictor-form">
+
+      <!-- CARD 1 – Personal -->
+      <div class="form-card" data-step="1">
+        <div class="card-header">
+          <div class="card-icon">👤</div>
+          <div><h3>Personal Details</h3><p>Basic demographic information</p></div>
+          <div class="step-badge">01</div>
+        </div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Body Type</label>
+            <div class="select-cards">
+              {% for bt in options.body_types %}
+              <div class="select-card" data-value="{{ bt }}" onclick="selectCard(this,'body_type')">
+                <span class="sc-icon">{{ {'normal':'🧍','overweight':'🏋️','obese':'⚖️','underweight':'🌱'}[bt] }}</span>
+                <span class="sc-label">{{ bt.title() }}</span>
+              </div>
+              {% endfor %}
+            </div>
+            <input type="hidden" id="body_type" required>
+          </div>
+          <div class="form-group">
+            <label>Sex</label>
+            <div class="select-cards">
+              {% for s in options.sexes %}
+              <div class="select-card" data-value="{{ s }}" onclick="selectCard(this,'sex')">
+                <span class="sc-icon">{{ {'female':'👩','male':'👨'}[s] }}</span>
+                <span class="sc-label">{{ s.title() }}</span>
+              </div>
+              {% endfor %}
+            </div>
+            <input type="hidden" id="sex" required>
+          </div>
+        </div>
+      </div>
+
+      <!-- CARD 2 – Diet & Lifestyle -->
+      <div class="form-card" data-step="2">
+        <div class="card-header">
+          <div class="card-icon">🥗</div>
+          <div><h3>Diet & Daily Habits</h3><p>Food choices and daily routines</p></div>
+          <div class="step-badge">02</div>
+        </div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Diet Type</label>
+            <div class="select-cards large-cards">
+              {% for d in options.diets %}
+              <div class="select-card" data-value="{{ d }}" onclick="selectCard(this,'diet')">
+                <span class="sc-icon">{{ {'omnivore':'🍽️','pescatarian':'🐟','vegetarian':'🥦','vegan':'🌱'}[d] }}</span>
+                <span class="sc-label">{{ d.title() }}</span>
+                <span class="sc-desc">{{ {'omnivore':'Meat & all','pescatarian':'Fish + veg','vegetarian':'No meat','vegan':'Plant only'}[d] }}</span>
+              </div>
+              {% endfor %}
+            </div>
+            <input type="hidden" id="diet" required>
+          </div>
+          <div class="form-group">
+            <label>How Often Do You Shower?</label>
+            <div class="select-cards">
+              {% for sh in options.shower_freqs %}
+              <div class="select-card" data-value="{{ sh }}" onclick="selectCard(this,'shower_freq')">
+                <span class="sc-icon">{{ {'daily':'🚿','twice a day':'🛁','more frequently':'💦','less frequently':'🌊'}[sh] }}</span>
+                <span class="sc-label">{{ sh.title() }}</span>
+              </div>
+              {% endfor %}
+            </div>
+            <input type="hidden" id="shower_freq" required>
+          </div>
+          <div class="form-group">
+            <label>Social Activity Level</label>
+            <div class="select-cards">
+              {% for sa in options.social_activities %}
+              <div class="select-card" data-value="{{ sa }}" onclick="selectCard(this,'social_activity')">
+                <span class="sc-icon">{{ {'never':'🏠','sometimes':'🚶','often':'🎉'}[sa] }}</span>
+                <span class="sc-label">{{ sa.title() }}</span>
+              </div>
+              {% endfor %}
+            </div>
+            <input type="hidden" id="social_activity" required>
+          </div>
+          <div class="form-group">
+            <label for="grocery_bill">Monthly Grocery Bill (₹ / $)</label>
+            <div class="range-wrapper">
+              <input type="range" id="grocery_range" min="50" max="500" value="200" class="range-slider"
+                     oninput="syncRange('grocery_bill','grocery_range',this.value,'')">
+              <input type="number" id="grocery_bill" value="200" min="50" max="500" class="num-input"
+                     oninput="syncNum('grocery_bill','grocery_range',this.value)">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="new_clothes">New Clothes Bought per Month</label>
+            <div class="range-wrapper">
+              <input type="range" id="clothes_range" min="0" max="60" value="10" class="range-slider"
+                     oninput="syncRange('new_clothes','clothes_range',this.value,' items')">
+              <input type="number" id="new_clothes" value="10" min="0" max="60" class="num-input"
+                     oninput="syncNum('new_clothes','clothes_range',this.value)">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CARD 3 – Transport -->
+      <div class="form-card" data-step="3">
+        <div class="card-header">
+          <div class="card-icon">🚗</div>
+          <div><h3>Transport & Travel</h3><p>How you move around locally and globally</p></div>
+          <div class="step-badge">03</div>
+        </div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Primary Transport Mode</label>
+            <div class="select-cards">
+              {% for t in options.transports %}
+              <div class="select-card" data-value="{{ t }}" onclick="selectCard(this,'transport')">
+                <span class="sc-icon">{{ {'private':'🚗','public':'🚌','walk/bicycle':'🚲'}[t] }}</span>
+                <span class="sc-label">{{ {'private':'Private Car','public':'Public','walk/bicycle':'Walk / Bike'}[t] }}</span>
+              </div>
+              {% endfor %}
+            </div>
+            <input type="hidden" id="transport" required>
+          </div>
+          <div class="form-group">
+            <label>Frequency of Air Travel</label>
+            <div class="select-cards">
+              {% for af in options.air_travel_freqs %}
+              <div class="select-card" data-value="{{ af }}" onclick="selectCard(this,'air_travel_freq')">
+                <span class="sc-icon">{{ {'never':'🚫','rarely':'🛫','frequently':'✈️','very frequently':'🌍'}[af] }}</span>
+                <span class="sc-label">{{ af.title() }}</span>
+              </div>
+              {% endfor %}
+            </div>
+            <input type="hidden" id="air_travel_freq" required>
+          </div>
+          <div class="form-group full-width">
+            <label for="vehicle_km">Vehicle Monthly Distance (km)</label>
+            <div class="range-wrapper">
+              <input type="range" id="vehicle_range" min="0" max="5000" value="1000" step="50" class="range-slider"
+                     oninput="syncRange('vehicle_km','vehicle_range',this.value,' km')">
+              <input type="number" id="vehicle_km" value="1000" min="0" max="5000" class="num-input"
+                     oninput="syncNum('vehicle_km','vehicle_range',this.value)">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CARD 4 – Home Energy -->
+      <div class="form-card" data-step="4">
+        <div class="card-header">
+          <div class="card-icon">⚡</div>
+          <div><h3>Home & Energy</h3><p>Heating source and energy efficiency practices</p></div>
+          <div class="step-badge">04</div>
+        </div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Heating Energy Source</label>
+            <div class="select-cards large-cards">
+              {% for h in options.heating_sources %}
+              <div class="select-card" data-value="{{ h }}" onclick="selectCard(this,'heating_source')">
+                <span class="sc-icon">{{ {'coal':'⚫','natural gas':'🔵','electricity':'⚡','wood':'🪵'}[h] }}</span>
+                <span class="sc-label">{{ h.title() }}</span>
+                <span class="sc-desc">{{ {'coal':'High emission','natural gas':'Moderate','electricity':'Lower','wood':'Renewable'}[h] }}</span>
+              </div>
+              {% endfor %}
+            </div>
+            <input type="hidden" id="heating_source" required>
+          </div>
+          <div class="form-group">
+            <label>Do You Use Energy-Efficient Devices?</label>
+            <div class="select-cards">
+              {% for ee in options.energy_efficiencies %}
+              <div class="select-card" data-value="{{ ee }}" onclick="selectCard(this,'energy_efficiency')">
+                <span class="sc-icon">{{ {'No':'❌','Sometimes':'🔄','Yes':'✅'}[ee] }}</span>
+                <span class="sc-label">{{ ee }}</span>
+              </div>
+              {% endfor %}
+            </div>
+            <input type="hidden" id="energy_efficiency" required>
+          </div>
+        </div>
+      </div>
+
+      <!-- CARD 5 – Waste & Screen -->
+      <div class="form-card" data-step="5">
+        <div class="card-header">
+          <div class="card-icon">🗑️</div>
+          <div><h3>Waste & Screen Time</h3><p>Waste output and digital consumption habits</p></div>
+          <div class="step-badge">05</div>
+        </div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Waste Bag Size</label>
+            <div class="select-cards">
+              {% for ws in options.waste_bag_sizes %}
+              <div class="select-card" data-value="{{ ws }}" onclick="selectCard(this,'waste_bag_size')">
+                <span class="sc-icon">{{ {'small':'🟢','medium':'🟡','large':'🟠','extra large':'🔴'}[ws] }}</span>
+                <span class="sc-label">{{ ws.title() }}</span>
+              </div>
+              {% endfor %}
+            </div>
+            <input type="hidden" id="waste_bag_size" required>
+          </div>
+          <div class="form-group">
+            <label for="waste_bag_count">Waste Bags per Week</label>
+            <div class="range-wrapper">
+              <input type="range" id="waste_range" min="1" max="10" value="3" class="range-slider"
+                     oninput="syncRange('waste_bag_count','waste_range',this.value,' bags')">
+              <input type="number" id="waste_bag_count" value="3" min="1" max="10" class="num-input"
+                     oninput="syncNum('waste_bag_count','waste_range',this.value)">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="tv_pc_hours">TV / PC Daily Hours</label>
+            <div class="range-wrapper">
+              <input type="range" id="tv_range" min="0" max="24" value="5" class="range-slider"
+                     oninput="syncRange('tv_pc_hours','tv_range',this.value,' hrs')">
+              <input type="number" id="tv_pc_hours" value="5" min="0" max="24" class="num-input"
+                     oninput="syncNum('tv_pc_hours','tv_range',this.value)">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="internet_hours">Internet Daily Hours</label>
+            <div class="range-wrapper">
+              <input type="range" id="internet_range" min="0" max="24" value="4" class="range-slider"
+                     oninput="syncRange('internet_hours','internet_range',this.value,' hrs')">
+              <input type="number" id="internet_hours" value="4" min="0" max="24" class="num-input"
+                     oninput="syncNum('internet_hours','internet_range',this.value)">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Submit -->
+      <div class="submit-area">
+        <button type="submit" class="predict-btn" id="predictBtn">
+          <span class="btn-text">🔬 Analyse My Carbon Footprint</span>
+          <span class="btn-loader hidden">⏳ Calculating...</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</section>
+
+<!-- RESULTS -->
+<section id="results" class="results-section hidden">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-tag">AI Prediction Results</span>
+      <h2>Your Carbon Footprint Report</h2>
+    </div>
+    <div class="results-grid">
+      <div class="result-card score-card">
+        <div class="score-ring-wrap">
+          <svg class="score-ring" viewBox="0 0 200 200">
+            <circle cx="100" cy="100" r="85" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="12"/>
+            <circle id="scoreArc" cx="100" cy="100" r="85" fill="none" stroke="url(#scoreGrad)"
+                    stroke-width="12" stroke-linecap="round"
+                    stroke-dasharray="534" stroke-dashoffset="534"
+                    transform="rotate(-90 100 100)"/>
+            <defs>
+              <linearGradient id="scoreGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#4ade80"/>
+                <stop offset="100%" stop-color="#22d3ee"/>
+              </linearGradient>
+            </defs>
+          </svg>
+          <div class="score-center">
+            <span class="score-value" id="co2Value">—</span>
+            <span class="score-unit">kg CO₂/year</span>
+          </div>
+        </div>
+        <div class="score-info">
+          <div class="category-badge" id="categoryBadge">—</div>
+          <p class="percentile-text" id="percentileText">—</p>
+        </div>
+      </div>
+
+      <div class="result-card prob-card">
+        <h3>Emission Category Confidence</h3>
+        <div class="prob-bars">
+          <div class="prob-bar-item">
+            <div class="prob-label"><span>Low</span><span id="prob-Low">—</span></div>
+            <div class="prob-track"><div class="prob-fill low" id="pfill-Low"></div></div>
+          </div>
+          <div class="prob-bar-item">
+            <div class="prob-label"><span>Medium</span><span id="prob-Medium">—</span></div>
+            <div class="prob-track"><div class="prob-fill medium" id="pfill-Medium"></div></div>
+          </div>
+          <div class="prob-bar-item">
+            <div class="prob-label"><span>High</span><span id="prob-High">—</span></div>
+            <div class="prob-track"><div class="prob-fill high" id="pfill-High"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="result-card breakdown-card">
+        <h3>Emission Breakdown by Source</h3>
+        <div class="breakdown-chart" id="breakdownChart"></div>
+      </div>
+
+      <div class="result-card recs-card">
+        <h3>💡 Personalised Recommendations</h3>
+        <div class="recs-list" id="recsList"></div>
+      </div>
+    </div>
+
+    <div class="try-again-wrap">
+      <button onclick="resetForm()" class="try-again-btn">↩ Try Different Values</button>
+      <a href="/dashboard" class="dashboard-btn">📊 View Full Analytics →</a>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section class="about-section">
+  <div class="container">
+    <div class="about-grid">
+      <div class="about-text">
+        <span class="section-tag">About This Project</span>
+        <h2>Data-Driven Environmental Intelligence</h2>
+        <p>Developed as Mini Project 22CSE665 at <strong>Nitte Meenakshi Institute of Technology</strong>, under <strong>Dr. Vijaya Shetty S.</strong></p>
+        <p>Uses the real <strong>Kaggle Individual Carbon Footprint Dataset</strong> (10,000 records) with Random Forest, Decision Tree, Linear Regression, and K-Means clustering to deliver personalised predictions.</p>
+        <div class="team-chips">
+          <span>B S Bindushree</span><span>Vaibhav S Sollapure</span>
+          <span>Varshini G</span><span>Veenal Coutinho</span>
+        </div>
+      </div>
+      <div class="tech-stack">
+        <div class="tech-card"><div class="tc-icon">🐍</div><div class="tc-name">Python</div><div class="tc-desc">Core language</div></div>
+        <div class="tech-card"><div class="tc-icon">🤖</div><div class="tc-name">Scikit-learn</div><div class="tc-desc">ML models</div></div>
+        <div class="tech-card"><div class="tc-icon">🌶️</div><div class="tc-name">Flask</div><div class="tc-desc">Web framework</div></div>
+        <div class="tech-card"><div class="tc-icon">🐼</div><div class="tc-name">Pandas</div><div class="tc-desc">Data handling</div></div>
+        <div class="tech-card"><div class="tc-icon">📊</div><div class="tc-name">Chart.js</div><div class="tc-desc">Visualisations</div></div>
+        <div class="tech-card"><div class="tc-icon">📦</div><div class="tc-name">Kaggle</div><div class="tc-desc">Real dataset</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="container">
+    <p>🌿 EcoTrace — Carbon Footprint Predictor &nbsp;|&nbsp; NMIT CSE Mini Project 22CSE665 &nbsp;|&nbsp; AY 2025–2026</p>
+  </div>
+</footer>
+
+<script src="/static/js/main.js"></script>
+</body>
+</html>
